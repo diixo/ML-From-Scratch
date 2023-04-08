@@ -6,6 +6,46 @@ import copy
 from mlfromscratch.deep_learning.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU
 from mlfromscratch.deep_learning.activation_functions import TanH, ELU, SELU, Softmax
 
+# fibonacci 
+fib = np.array([1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233])
+
+def mtxGen(mtx, limit = 0.1):
+    height = mtx.shape[0] #n1
+    width = mtx.shape[1]  #n2
+
+    i = 0
+    amount = 37 #37
+
+    for y in range(0, height):
+        for x in range(0, width):
+            i = y * width + x
+            iy = fib[y % 13] % amount + 1
+            ix = fib[x % 13] % amount + 1
+            id = (i % (iy + ix + 1) % amount - i % ((amount + 1) / 2)) * (i % 2 - 1)
+            #id = i % (iy + ix + 1) % amount - i % ((iy + 1) * (ix + 1)) % amount
+            #print(str(id))
+
+            mtx[y][x] = limit * float(id) / float(amount)
+
+    return mtx
+
+def mtxGen01(mtx, limit = 0.9):
+    height = mtx.shape[0] #n1
+    width = mtx.shape[1]  #n2
+
+    i = 0
+    amount = 37 #37
+
+    for y in range(0, height):
+        for x in range(0, width):
+            i = y * width + x
+            iy = fib[y % 13] % amount + 1
+            ix = fib[x % 13] % amount + 1
+            id = i % (ix*iy + iy + ix + 1) % amount
+
+            mtx[y][x] = limit * float(id) / float(amount)
+
+    return mtx
 
 class Layer(object):
 
