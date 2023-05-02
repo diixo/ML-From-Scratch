@@ -79,7 +79,8 @@ class NeuralNetwork():
                 loss, acc = self.train_on_batch(X_batch, y_batch)
                 batch_error.append(loss)
 
-            self.errors["training"].append(np.mean(batch_error))
+            train_batch_error = np.mean(batch_error)
+            self.errors["training"].append(train_batch_error)
 
             if self.val_set is not None:
                 val_loss, acc = self.test_on_batch(self.val_set["X"], self.val_set["y"])

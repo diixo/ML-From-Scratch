@@ -30,9 +30,9 @@ def main():
     y = to_categorical(y.astype("int"))
 
     n_samples, n_features = X.shape
-    n_hidden = 512
+    n_hidden = 150
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, seed=1)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, seed=1.0)
 
     clf = NeuralNetwork(optimizer=optimizer,
                         loss=CrossEntropy,
@@ -43,19 +43,22 @@ def main():
     clf.add(Dense(n_hidden))
     clf.add(Activation('leaky_relu'))
     clf.add(Dropout(0.25))
+
     clf.add(Dense(n_hidden))
     clf.add(Activation('leaky_relu'))
     clf.add(Dropout(0.25))
-    clf.add(Dense(n_hidden))
-    clf.add(Activation('leaky_relu'))
-    clf.add(Dropout(0.25))
+
+    #clf.add(Dense(n_hidden))
+    #clf.add(Activation('leaky_relu'))
+    #clf.add(Dropout(0.25))
+
     clf.add(Dense(10))
     clf.add(Activation('softmax'))
 
     print ()
     clf.summary(name="MLP")
     
-    train_err, val_err = clf.fit(X_train, y_train, n_epochs=50, batch_size=256)
+    train_err, val_err = clf.fit(X_train, y_train, n_epochs=50, batch_size=80)
     
     # Training and validation error plot
     n = len(train_err)
