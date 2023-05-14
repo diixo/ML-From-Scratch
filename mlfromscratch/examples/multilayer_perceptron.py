@@ -26,6 +26,12 @@ def main():
     X = data.data
     y = data.target
 
+    #f = open("digits-8x8.bin", "wb")
+    #for x in X:
+    #    xx = np.array(x, dtype='d')
+    #    f.write(xx)
+    #f.close()
+
     # Convert to one-hot encoding
     y = to_categorical(y.astype("int"))
 
