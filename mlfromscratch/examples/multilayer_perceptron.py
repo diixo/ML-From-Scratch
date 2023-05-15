@@ -36,7 +36,7 @@ def main():
     y = to_categorical(y.astype("int"))
 
     n_samples, n_features = X.shape
-    n_hidden = 150
+    n_hidden = 180
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, seed=1.0)
 
@@ -64,7 +64,7 @@ def main():
     print ()
     clf.summary(name="MLP")
     
-    train_err, val_err = clf.fit(X_train, y_train, n_epochs=50, batch_size=80)
+    train_err, val_err = clf.fit(X_train, y_train, n_epochs=80, batch_size=80)
     
     # Training and validation error plot
     n = len(train_err)
