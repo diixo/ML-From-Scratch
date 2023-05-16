@@ -11,8 +11,6 @@ class Sentencizer:
         self._split_characters = split_characters
         self._delimiter_token = delimiter_token
         self._index = 0
-        #self._fstopwords = open("stopwords.txt", 'r', encoding='utf-8')
-        #self._stopwords = [line.replace('\n', '') for line in self._fstopwords.readlines()]
         self._stopwords = []
         self.vocab = set()
         self.vocab_freq = {}
@@ -70,7 +68,13 @@ class Sentencizer:
             return result
         raise StopIteration
 
-    def readFile(self, filename):
+    def readFile(self, filename, stopwords = ""):
+
+        fstopwords = ""
+        if stopwords:
+            fstopwords = open(stopwords, 'r', encoding='utf-8')
+            self._stopwords = [line.replace('\n', '') for line in fstopwords.readlines()]
+            fstopwords.close()
 
         f = open(filename, 'r', encoding='utf-8')
         count = 0;
@@ -82,7 +86,7 @@ class Sentencizer:
             count+=1
             self.sentencize(line)
 
-        f.close();
+        f.close()
         self.vocab = sorted(self.vocab)
         self.vocab_freq_sorted = sorted(self.vocab_freq.items(), key=itemgetter(1), reverse=True)
 

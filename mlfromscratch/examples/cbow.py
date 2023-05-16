@@ -18,19 +18,16 @@ from mlfromscratch.utils import get_random_subsets, shuffle_data, accuracy_score
 from mlfromscratch.deep_learning.optimizers import SGD, StochasticGradientDescent, Adam, RMSprop, Adagrad, Adadelta
 from mlfromscratch.deep_learning.loss_functions import CrossEntropy
 from mlfromscratch.utils.misc import bar_widgets
-from mlfromscratch.deep_learning.layers import Dense, Dropout, Activation
+from mlfromscratch.deep_learning.layers import Dense, Dropout, Activation, Embedding
 
 from mlfromscratch.nlp.sentencizer import Sentencizer
 
 tokenizer = Sentencizer()
 
 try:
-    tokenizer.readFile("train-nn.txt")
+    tokenizer.readFile("../data/train-nn.txt", "../data/stopwords.txt")
 except IOError:  # FileNotFoundError in Python 3
     print("File not found")
-
-
-vocab_size = len(tokenizer.vocab)
 
 context_wnd = 3 # 2, 3 or 4: [(context_wnd), target]
 
@@ -91,35 +88,13 @@ for sentence in tokenizer.sentences:
 ############
 #print(X)
 
-###################################################################################
+epochs = 100
+embed_dim = 100  #sqrt(tokenizer.sentences.sz)
 
-CONTEXT_SIZE = 2
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, seed=1)
 
-# We will use Shakespeare Sonnet 2
-test_sentence = """When forty winters shall besiege thy brow,
-And dig deep trenches in thy beauty's field,
-Thy youth's proud livery so gazed on now,
-Will be a totter'd weed of small worth held:
-Then being asked, where all thy beauty lies,
-Where all the treasure of thy lusty days;
-To say, within thine own deep sunken eyes,
-Were an all-eating shame, and thriftless praise.
-How much more praise deserv'd thy beauty's use,
-If thou couldst answer 'This fair child of mine
-Shall sum my count, and make my old excuse,'
-Proving his beauty by succession thine!
-This were to be new made when thou art old,
-And see thy blood warm when thou feel'st it cold.""".split()
-# we should tokenize the input, but we will ignore that for now
-# build a list of tuples.
-# Each tuple is ([ word_i-CONTEXT_SIZE, ..., word_i-1 ], target word)
-ngrams = [
-    (
-        [test_sentence[i - j - 1] for j in range(CONTEXT_SIZE)],
-        test_sentence[i]
-    )
-    for i in range(CONTEXT_SIZE, len(test_sentence))
-]
-# Print the first 3, just so you can see what they look like.
-print(ngrams[:42])
+cbow = NeuralNetwork(optimizer=SGD, loss=CrossEntropy, validation_data=(X_test, y_test))
 
+cbow.add(Embedding(tokenizer.vocab, embed_dim))
+
+#train_err, val_err = cbow.fit(X_train, y_train, n_epochs=epochs, batch_size=1)

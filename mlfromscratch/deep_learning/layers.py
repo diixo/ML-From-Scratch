@@ -289,13 +289,13 @@ class Conv2D(Layer):
 
 class Embedding(Layer):
 
-    def __init__(self, vocab, embed_dim, context_wnd):
+    def __init__(self, vocab, embed_dim):
         self.vocab = vocab
         self.word_to_ix = {word: i for i, word in enumerate(self.vocab)}
         self.ix_to_word = {i: word for i, word in enumerate(self.vocab)}
-        self.embeddings = np.random.random_sample(len(vocab), embed_dim)
+        self.embeddings = np.random.random_sample((len(vocab), embed_dim))
         self.embed_dim = embed_dim
-        self.context_wnd = context_wnd
+        #self.context_wnd = context_wnd
 
     def initialize(self, optimizer):
         self.embeddings = np.random.random_sample(len(self.vocab_size), self.embed_dim)
