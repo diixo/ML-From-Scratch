@@ -6,44 +6,6 @@ import copy
 from mlfromscratch.deep_learning.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU
 from mlfromscratch.deep_learning.activation_functions import TanH, ELU, SELU, Softmax
 
-# fibonacci 
-fib = np.array([7, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233])
-
-def mtxGen(mtx, limit = 0.1):
-    height = mtx.shape[0] #n1
-    width = mtx.shape[1]  #n2
-
-    i = 0
-    amount = 37 # magic number
-
-    for y in range(0, height):
-        for x in range(0, width):
-            i = y * width + x
-            iy = fib[y % 13] % amount + 1
-            ix = fib[x % 13] % amount + 1
-            id = (i % (iy + ix + 1) % amount - i % ((amount + 1) / 2)) * (i % 2 - 1)
-
-            mtx[y][x] = limit * float(id) / float(amount)
-
-    return mtx
-
-def mtxGen01(mtx, limit = 0.9):
-    height = mtx.shape[0] #n1
-    width = mtx.shape[1]  #n2
-
-    i = 0
-    amount = 37 # magic number
-
-    for y in range(0, height):
-        for x in range(0, width):
-            i = y * width + x
-            iy = fib[y % 13] % amount + 1
-            ix = fib[x % 13] % amount + 1
-            id = i % (ix*iy + iy + ix + 1) % amount
-
-            mtx[y][x] = limit * float(id) / float(amount)
-
-    return mtx
 
 class Layer(object):
 
@@ -324,6 +286,23 @@ class Conv2D(Layer):
         output_width = (width + np.sum(pad_w) - self.filter_shape[1]) / self.stride + 1
         return self.n_filters, int(output_height), int(output_width)
 
+
+class Embedding(Layer):
+
+    def __init__(self, vocab, embed_dim, context_wnd):
+        self.vocab = vocab
+        self.word_to_ix = {word: i for i, word in enumerate(self.vocab)}
+        self.ix_to_word = {i: word for i, word in enumerate(self.vocab)}
+        self.embeddings = np.random.random_sample(len(vocab), embed_dim)
+        self.embed_dim = embed_dim
+        self.context_wnd = context_wnd
+
+    def initialize(self, optimizer):
+        self.embeddings = np.random.random_sample(len(self.vocab_size), self.embed_dim)
+
+    def forward_pass(self, context_idxs, training=True):
+        m = self.embeddings[context_idxs].reshape(1, -1)
+        return m
 
 class BatchNormalization(Layer):
     """Batch normalization.
