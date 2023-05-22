@@ -19,6 +19,19 @@ class Softmax():
         p = self.__call__(x)
         return p * (1 - p)
 
+class LogSoftmax():
+    def __call__(self, x):
+        e_x = np.exp(x - np.max(x))
+        return np.log(e_x / e_x.sum())
+
+    def gradient(self, x):
+        #out = np.zeros_like(logits)
+        #out[np.arange(len(logits)), target] = 1
+
+        #softmax = np.exp(logits) / np.exp(logits).sum(axis=-1, keepdims=True)
+
+        return x# (softmax - out) / logits.shape[0]
+
 class TanH():
     def __call__(self, x):
         return 2 / (1 + np.exp(-2*x)) - 1

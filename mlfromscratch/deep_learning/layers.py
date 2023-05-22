@@ -3,7 +3,7 @@ from __future__ import print_function, division
 import math
 import numpy as np
 import copy
-from mlfromscratch.deep_learning.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU
+from mlfromscratch.deep_learning.activation_functions import Sigmoid, ReLU, SoftPlus, LeakyReLU, LogSoftmax
 from mlfromscratch.deep_learning.activation_functions import TanH, ELU, SELU, Softmax
 
 
@@ -286,6 +286,14 @@ class Conv2D(Layer):
         output_width = (width + np.sum(pad_w) - self.filter_shape[1]) / self.stride + 1
         return self.n_filters, int(output_height), int(output_width)
 
+# Linear-model
+def linear(m, theta):
+    w = theta
+    return m.dot(w)
+
+def optimize(theta, grad, lr=0.03):
+    theta -= grad * lr
+    return theta
 
 class Embedding(Layer):
 
@@ -295,14 +303,42 @@ class Embedding(Layer):
         self.ix_to_word = {i: word for i, word in enumerate(self.vocab)}
         self.embeddings = np.random.random_sample((len(vocab), embed_dim))
         self.embed_dim = embed_dim
-        #self.context_wnd = context_wnd
+        self.context_wnd = 0
+        self.theta = None
+        self.m = None
+        self.trainable = True
+
+    def Log_Softmax(self, x):
+        e_x = np.exp(x - np.max(x))
+        return np.log(e_x / e_x.sum())
 
     def initialize(self, optimizer):
-        self.embeddings = np.random.random_sample(len(self.vocab_size), self.embed_dim)
+        self.context_wnd = 0
 
     def forward_pass(self, context_idxs, training=True):
-        m = self.embeddings[context_idxs].reshape(1, -1)
-        return m
+        if self.theta is None:
+            self.theta = np.random.uniform(-1, 1, (context_idxs.shape[1] * self.embed_dim, len(self.vocab)))
+            #print("Embedding.theta=", self.theta.shape)
+
+        #print("Embedding.context_ids.shape=", context_idxs.shape)
+        #print("Embedding.embedding=", self.embeddings.shape)
+
+        self.m = self.embeddings[context_idxs].reshape(1, -1)
+        #print("Embedding.forward.m=", self.m.shape)
+        n = self.m.dot(self.theta)
+        o = self.Log_Softmax(n)
+        return n, o
+
+    def backward_pass(self, loss_grad):
+        if self.trainable:
+            dw = self.m.T.dot(loss_grad)
+            self.theta = optimize(self.theta, dw)
+            return dw
+        return loss_grad
+
+    #def output_shape(self):
+    #   return only as stub:
+    #   return self.embeddings.shape
 
 class BatchNormalization(Layer):
     """Batch normalization.
@@ -627,7 +663,8 @@ activation_functions = {
     'softmax': Softmax,
     'leaky_relu': LeakyReLU,
     'tanh': TanH,
-    'softplus': SoftPlus
+    'softplus': SoftPlus,
+    'log_softmax': LogSoftmax
 }
 
 class Activation(Layer):
