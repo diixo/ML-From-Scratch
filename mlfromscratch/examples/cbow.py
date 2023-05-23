@@ -86,21 +86,20 @@ X = np.array(X) # reshape to array([sz, context_wnd])
 y = np.array(y) # reshape to array([sz, 1]) = shape()
 ##########################
 
-epochs = 50
-embed_dim = 50  #sqrt(tokenizer.sentences.sz)
-
-#X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, seed=1)
+epochs = 100
+embed_dim = 100  # 4*sqrt(tokenizer.sentences.sz)
 
 #cbow = NeuralNetwork(optimizer=SGD, loss=NLLLoss, validation_data=(X, y))
 cbow = NeuralNetwork(optimizer=SGD, loss=NLLLoss)
 
-# INFO: src: https://www.kaggle.com/code/alincijov/nlp-starter-continuous-bag-of-words-cbow
-
 # TODO: need to verify with https://github.com/viix-co/ann-pure-numpy/tree/main
 cbow.add(Embedding(tokenizer.vocab, embed_dim))
-#cbow.add(Activation('log_softmax'))
 
 train_err, val_err = cbow.fit(X, y, n_epochs=epochs, batch_size=1)
+
+accuracy = 100.0 * cbow.test_by_one(X, y)
+
+print("Accuracy:", accuracy)
 
 # Training and validation error plot
 #n = len(train_err)
@@ -114,7 +113,3 @@ train_err, val_err = cbow.fit(X, y, n_epochs=epochs, batch_size=1)
 
 #_, accuracy = clf.test_on_batch(X_test, y_test)
 #print("Accuracy:", 0)
-
-# Reduce dimension to 2D using PCA and plot the results
-#y_pred = np.argmax(clf.predict(X_test), axis=1)
-#Plot().plot_in_2d(X_test, y_pred, title="Multilayer Perceptron", accuracy=accuracy, legend_labels=range(10))

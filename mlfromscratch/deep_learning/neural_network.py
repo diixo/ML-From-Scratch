@@ -58,6 +58,22 @@ class NeuralNetwork():
 
         return loss, acc
 
+    def test_by_one(self, X, y):
+        """test by one item"""
+        xn = X.shape[0]
+        yn = y.shape[0]
+        assert (yn == xn)
+        acc = 0.0
+
+        for i in range(xn):
+            y_pred = self._forward_pass(X[i:i+1], training=False)
+            word_id = np.argmax(y_pred[-1])
+            acc += float(word_id == y[i])
+
+        if xn > 0:  # avoid div by zero
+            acc = acc / xn
+        return acc
+
     def train_on_batch(self, X, y):
         """ Single gradient update over one batch of samples """
         y_pred = self._forward_pass(X)
