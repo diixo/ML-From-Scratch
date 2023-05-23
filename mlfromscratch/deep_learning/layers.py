@@ -307,6 +307,7 @@ class Embedding(Layer):
         self.m = None
         self.trainable = True
         self.lr = learning_rate
+        self.input_shape = self.embeddings.shape
 
     def Log_Softmax(self, x):
         e_x = np.exp(x - np.max(x))
@@ -332,9 +333,14 @@ class Embedding(Layer):
             return dw
         return loss_grad
 
-    #def output_shape(self):
-    #   return only as stub:
-    #   return self.embeddings.shape
+    def parameters(self):
+        if self.theta is None:
+            return 0
+        return np.prod(self.theta.shape)
+
+    def output_shape(self):
+        """ Only as stub:"""
+        return (len(self.vocab))
 
 class BatchNormalization(Layer):
     """Batch normalization.

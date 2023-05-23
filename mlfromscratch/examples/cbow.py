@@ -25,7 +25,9 @@ from mlfromscratch.nlp.sentencizer import Sentencizer
 tokenizer = Sentencizer()
 
 try:
-    tokenizer.readFile("../data/train-1.txt", "../data/stopwords.txt")
+    tokenizer.readFile(
+        "../data/train-1.txt",
+        "../data/stopwords.txt")
 except IOError:  # FileNotFoundError in Python 3
     print("File not found")
 
@@ -87,7 +89,9 @@ y = np.array(y) # reshape to array([sz, 1]) = shape()
 ##########################
 
 epochs = 100
-embed_dim = 100  # 4*sqrt(tokenizer.sentences.sz)
+embed_dim = 60  # 4*sqrt(tokenizer.sentences.sz)
+
+np.random.seed(42)
 
 #cbow = NeuralNetwork(optimizer=SGD, loss=NLLLoss, validation_data=(X, y))
 cbow = NeuralNetwork(optimizer=SGD, loss=NLLLoss)
@@ -96,10 +100,12 @@ cbow = NeuralNetwork(optimizer=SGD, loss=NLLLoss)
 cbow.add(Embedding(tokenizer.vocab, embed_dim))
 
 train_err, val_err = cbow.fit(X, y, n_epochs=epochs, batch_size=1)
+cbow.summary()
 
-accuracy = 100.0 * cbow.test_by_one(X, y)
+accuracy = cbow.test_by_one(X, y)
 
 print("Accuracy:", accuracy)
+
 
 # Training and validation error plot
 #n = len(train_err)

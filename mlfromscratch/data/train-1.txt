@@ -13,7 +13,7 @@ Text clustering is a critical step in text data analysis and has been extensivel
 [3] A content-based recommender system for computer science publications, Knowledge-Based System.
 [4] Text clustering with seeds affinity propagation
 [5] Short text conceptualization using a probabilistic knowledge-base
-[6] Latent Dirichlet allocation
+[6] Latent Dirichlet allocation - generative model
 [7] A Dirichlet multinomial mixture model-based approach for short text clustering
 [8] Advances in natural language processing
 [9] Hierarchical multi-label text classification: An attention-based recurrent network approach

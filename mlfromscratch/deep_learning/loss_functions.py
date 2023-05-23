@@ -50,8 +50,9 @@ class NLLLoss(Loss):
 
     # return accuracy
     def acc(self, y, y_pred):
-        # stub temporary
-        return 0
+        word_id = np.argmax(y_pred[-1])
+        # y[[[...]]] have only 1 value.
+        return float(word_id == np.asscalar(y))
 
     # log_softmax_crossentropy_with_logits
     def gradient(self, target, preds):
