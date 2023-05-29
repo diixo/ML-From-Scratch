@@ -17,12 +17,23 @@ class Softmax():
 
     def gradient(self, x):
         p = self.__call__(x)
-        return p * (1 - p)
+        return p * (1.0 - p)
 
+# https://ogunlao.github.io/2020/04/26/you_dont_really_know_softmax.html
+# https://stackoverflow.com/questions/61567597/how-is-log-softmax-implemented-to-compute-its-value-and-gradient-with-better
 class LogSoftmax():
-    def __call__(self, x):
-        e_x = np.exp(x - np.max(x))
-        return np.log(e_x / e_x.sum())
+    def __call__(self, x, recover_probs=True):
+        maxx = np.max(x)
+        log_sum_exp_x = np.log(np.sum(np.exp(x - maxx)))
+        log_probs = x - maxx - log_sum_exp_x
+
+        if recover_probs:
+            exp_log_probs = np.exp(log_probs)
+            sum_log_probs = np.sum(exp_log_probs)
+            probs = exp_log_probs / sum_log_probs
+            return probs
+
+        return log_probs
 
     def gradient(self, x):
         #out = np.zeros_like(logits)
