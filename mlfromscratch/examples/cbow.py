@@ -18,7 +18,7 @@ from mlfromscratch.utils import get_random_subsets, shuffle_data, accuracy_score
 from mlfromscratch.deep_learning.optimizers import SGD, StochasticGradientDescent, Adam, RMSprop, Adagrad, Adadelta
 from mlfromscratch.deep_learning.loss_functions import CrossEntropy, NLLLoss
 from mlfromscratch.utils.misc import bar_widgets
-from mlfromscratch.deep_learning.layers import Dense, Dropout, Activation, Embedding
+from mlfromscratch.deep_learning.layers import Dense, Dropout, Activation, CBoW
 
 from mlfromscratch.nlp.sentencizer import Sentencizer
 
@@ -26,10 +26,12 @@ tokenizer = Sentencizer()
 
 try:
     tokenizer.readFile(
-        "../data/train-1.txt",
+        "../data/train-nn.txt",
         "../data/stopwords.txt")
 except IOError:  # FileNotFoundError in Python 3
     print("File not found")
+
+print("Sentences:", len(tokenizer.sentences))
 
 context_wnd = 3 # 2, 3 or 4: [(context_wnd), target]
 
@@ -50,8 +52,8 @@ for sentence in tokenizer.sentences:
 
     if (context_wnd == 3):
         for i in range(0, len(sentence) - 3):
-            context = [sentence[i], sentence[i + 1], sentence[i + 2]]
-            target = sentence[i + 3]
+            context = [sentence[i + 1], sentence[i + 2], sentence[i + 3]]
+            target = sentence[i]
             data.append((context, target))
             #print("#" + target + " : " + context[0] + ", " + context[1] + ", " + context[2])
 
@@ -88,8 +90,8 @@ X = np.array(X) # reshape to array([sz, context_wnd])
 y = np.array(y) # reshape to array([sz, 1]) = shape()
 ##########################
 
-epochs = 100
-embed_dim = 60  # 4*sqrt(tokenizer.sentences.sz)
+epochs = 50
+embed_dim = 100  # 2*sqrt(tokenizer.sentences.sz)
 
 np.random.seed(42)
 
@@ -97,7 +99,7 @@ np.random.seed(42)
 cbow = NeuralNetwork(optimizer=SGD, loss=NLLLoss)
 
 # TODO: need to verify with https://github.com/viix-co/ann-pure-numpy/tree/main
-cbow.add(Embedding(tokenizer.vocab, embed_dim))
+cbow.add(CBoW(tokenizer.vocab, embed_dim))
 
 train_err, val_err = cbow.fit(X, y, n_epochs=epochs, batch_size=1)
 cbow.summary()
@@ -105,7 +107,7 @@ cbow.summary()
 accuracy = cbow.test_by_one(X, y)
 
 print("Accuracy:", accuracy)
-
+print("Accuracy:", accuracy)
 
 # Training and validation error plot
 #n = len(train_err)

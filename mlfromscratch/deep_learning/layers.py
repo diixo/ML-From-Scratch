@@ -295,9 +295,9 @@ def optimize(theta, grad, lr):
     theta -= grad * lr
     return theta
 
-class Embedding(Layer):
+class CBoW(Layer):
 
-    def __init__(self, vocab, embed_dim, learning_rate=0.02):
+    def __init__(self, vocab, embed_dim, learning_rate=0.03):
         self.vocab = vocab
         self.word_to_ix = {word: i for i, word in enumerate(self.vocab)}
         self.ix_to_word = {i: word for i, word in enumerate(self.vocab)}
