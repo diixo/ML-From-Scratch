@@ -286,6 +286,14 @@ class Conv2D(Layer):
         output_width = (width + np.sum(pad_w) - self.filter_shape[1]) / self.stride + 1
         return self.n_filters, int(output_height), int(output_width)
 
+# Linear-model
+def linear(m, theta):
+    w = theta
+    return m.dot(w)
+
+def optimize(theta, grad, lr):
+    theta -= grad * lr
+    return theta
 
 class BatchNormalization(Layer):
     """Batch normalization.

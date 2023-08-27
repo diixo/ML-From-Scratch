@@ -1,6 +1,20 @@
 import numpy as np
 from mlfromscratch.utils import make_diagonal, normalize
 
+class SGD():
+    def __init__(self, learning_rate=0.03):
+        self.learning_rate = learning_rate
+        self.w_updt = None
+
+    def update(self, w, grad_wrt_w):
+        # If not initialized
+        if self.w_updt is None:
+            self.w_updt = np.zeros(np.shape(w))
+
+        self.w_updt = w - grad_wrt_w * self.learning_rate
+
+        return self.w_updt
+
 # Optimizers for models that use gradient based methods for finding the 
 # weights that minimizes the loss.
 # A great resource for understanding these methods: 
